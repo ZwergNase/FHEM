@@ -33,7 +33,7 @@ package main;
 
 use strict;
 use warnings;  
-use HttpUtils;   
+use HttpUtils;    
 use Data::Dumper;
 use FHEM::Meta;
 

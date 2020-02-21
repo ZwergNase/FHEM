@@ -441,7 +441,7 @@ sub DSBMobile_getTTCallback($) {
                 # roomOld    => $f[9],
                 # comment    => $f[10]
                 # );
-                Log3 $name, 4, "found single line: " . Dumper(%tst);
+                #Log3 $name, 4, "found single line: " . Dumper(%tst);
 
                 #push( @result, \%roq ) if ( defined( $row{class} ) && $row{class} =~ /$filter/ );
                 push( @result, \%tst )

@@ -427,23 +427,6 @@ sub DSBMobile_getTTCallback($) {
                 }
                 $tst{sdate} = $fdate;
 
-                # my %row = (
-                # sdate      => $fdate,
-                # class      => $f[0],
-                # hour       => $f[1],
-                # teacherNew => $f[2],
-                # topicNew   => $f[3],
-                # teacherOld => $f[4],
-                # roomNew    => $f[5],
-                # topicOld   => $f[6],
-                # substof    => $f[7],
-                # substto    => $f[8],
-                # roomOld    => $f[9],
-                # comment    => $f[10]
-                # );
-                #Log3 $name, 4, "found single line: " . Dumper(%tst);
-
-                #push( @result, \%roq ) if ( defined( $row{class} ) && $row{class} =~ /$filter/ );
                 push( @result, \%tst )
                     if ( defined( $tst{$class} )
                     && $tst{$class} =~ /$filter/ );

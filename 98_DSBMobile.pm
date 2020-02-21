@@ -31,7 +31,7 @@
 
 package main;
 
-use strict; 
+use strict;
 use warnings;
 use HttpUtils;    
 use Data::Dumper;

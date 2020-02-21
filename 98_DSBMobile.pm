@@ -1,8 +1,8 @@
-﻿# $Id: 98_DSBMobile.pm 21240 2020-02-21 00:30:57Z KernSani $
+﻿# $Id: 98_DSBMobile.pm 21200 2020-02-14 21:51:19Z KernSani $
 ##############################################################################
 #
 #      98_DSBMobile.pm
-#     An FHEM Perl module that supports parental control for Nintendo Switch
+#     An FHEM Perl module that retrieves information from DSBMobile
 #
 #     Copyright by KernSani
 #
@@ -30,7 +30,7 @@
 
 package main;
 
-use strict; 
+use strict;
 use warnings;
 use HttpUtils;
 use Data::Dumper;
@@ -40,12 +40,12 @@ my $missingModul = "";
 
 #eval "use Blocking;1" or $missingModul .= "Blocking ";
 #eval "use UUID::Random;1"                      or $missingModul .= "install UUID::Random ";
-eval "use IO::Compress::Gzip qw(gzip);1"       or $missingModul .= "IO::Compress::Gzip ";
-eval "use IO::Uncompress::Gunzip qw(gunzip);1" or $missingModul .= "IO::Compress::Gunzip ";
-eval "use MIME::Base64;1"                      or $missingModul .= "MIME::Base64 ";
-eval "use HTML::TableExtract;1"                or $missingModul .= "HTML::TableExtract ";
-eval "use HTML::TreeBuilder;1"                 or $missingModul .= "HTML::TreeBuilder ";
-eval "use JSON::XS;1"                          or $missingModul .= "JSON::XS ";
+eval "use IO::Compress::Gzip qw(gzip);1"           or $missingModul .= "IO::Compress::Gzip ";
+eval "use IO::Uncompress::Gunzip qw(gunzip);1"     or $missingModul .= "IO::Compress::Gunzip ";
+eval "use MIME::Base64;1"                          or $missingModul .= "MIME::Base64 ";
+eval "use HTML::TableExtract;1"                    or $missingModul .= "HTML::TableExtract ";
+eval "use HTML::TreeBuilder;1"                     or $missingModul .= "HTML::TreeBuilder ";
+eval "use JSON::XS qw (encode_json decode_json);1" or $missingModul .= "JSON::XS ";
 
 #####################################
 sub DSBMobile_Initialize($) {
@@ -338,6 +338,7 @@ sub DSBMobile_getTTCallback($) {
         $te->parse($ttab);
         push( @tabs, $te->tables() );
     }
+
     #Log3 $name, 4, "[$name] Extracted Tables". Dumper(@tabs);
 
     Log3 $name, 4, "[$name] Starting extraction info";
@@ -400,9 +401,10 @@ sub DSBMobile_getTTCallback($) {
                     @ch = map { makeReadingName($_) } @f;
                     next;
                 }
+
                 #check if we have a single row (grouping by class)
-                if ( !defined($f[1]) ) {
-                                       
+                if ( !defined( $f[1] ) ) {
+
                     # create the reading if we didn't have a group before
                     unshift( @ch, makeReadingName($class) ) unless $group;
                     $group = $f[0];
@@ -439,6 +441,7 @@ sub DSBMobile_getTTCallback($) {
                 # comment    => $f[10]
                 # );
                 Log3 $name, 4, "found single line: " . Dumper(%tst);
+
                 #push( @result, \%roq ) if ( defined( $row{class} ) && $row{class} =~ /$filter/ );
                 push( @result, \%tst )
                     if ( defined( $tst{$class} )

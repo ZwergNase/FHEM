@@ -656,9 +656,16 @@ sub DSBMobile_infoHTML($) {
     my @data = @$dat;
 
     @data = sort { $a->{date} cmp $b->{date} } @data;
-
+    my $row = 1;
     foreach my $line (@data) {
-        $ret .= "<tr><td>"
+        if ($row % 2 == 0 ) {
+            $class = "even";
+        }
+        else {
+            $class = "odd";
+        }
+        $row++;
+        $ret .= "<tr class='$class'><td>"
             . "$line->{date}:</td><td><a  target='_blank' href='$line->{url}'>$line->{title}</a></td></tr>";
     }
     $ret .= "</table>";

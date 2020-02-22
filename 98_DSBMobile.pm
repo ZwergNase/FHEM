@@ -657,6 +657,7 @@ sub DSBMobile_infoHTML($) {
 
     @data = sort { $a->{date} cmp $b->{date} } @data;
     my $row = 1;
+    my $class;
     foreach my $line (@data) {
         if ($row % 2 == 0 ) {
             $class = "even";

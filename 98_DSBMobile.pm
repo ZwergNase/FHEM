@@ -649,7 +649,7 @@ sub DSBMobile_simpleHTML($;$) {
 sub DSBMobile_infoHTML($) {
     my ( $name, $infoDay ) = @_;
     my $dat = ReadingsVal( $name, ".lastAResult", "" );
-    my $ret = "<table>";
+    my $ret = "<table class="block wide">";
 
     $dat = decode_json($dat);
 

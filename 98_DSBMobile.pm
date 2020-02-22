@@ -21,7 +21,7 @@
 #
 ##############################################################################
 #     Changelog:
-#     20.02.2020    Parsing of grouped classes 
+#     20.02.2020    Parsing of grouped classes
 ##############################################################################
 ##############################################################################
 #     Todo:
@@ -33,7 +33,7 @@ package main;
 
 use strict;
 use warnings;
-use HttpUtils;    
+use HttpUtils;
 use Data::Dumper;
 use FHEM::Meta;
 
@@ -546,7 +546,7 @@ sub DSBMobile_simpleHTML($;$) {
     my $idat = ReadingsVal( $name, ".lastIResult", "" );
     my @cn = split( ",", ReadingsVal( $name, "columnNames", "" ) );
     my $classr = ReadingsVal( $name, "dsb_classReading", "Klasse_n_" );
-    my $ret = "<table>";
+    my $ret = "<table class='block wide'>";
 
     $dat  = decode_json($dat);
     $idat = decode_json($idat);
@@ -584,17 +584,36 @@ sub DSBMobile_simpleHTML($;$) {
     my $out = AttrVal( $name, "dsb_outputFormat", undef );
 
     foreach my $day (@days) {
-        $ret .= "</table><table><tr><td><b>" . $day . "</b></td></tr>";
+        my $row   = 0;
+        my $class = "even";
+        $ret .= "</table><table class='block wide'><tr class='$class'><td><b>" . $day . "</b></td></tr>";
+        $row++;
         if ($infoDay) {
             foreach my $iline (@idata) {
+                if ( $row % 2 == 0 ) {
+                    $class = "even";
+                }
+                else {
+                    $class = "odd";
+                }
+                $row++;
+
                 if ( $iline->{sdate} eq $day ) {
-                    $ret .= "<tr><td>" . $iline->{topic} . ": " . $iline->{text} . "</td></tr>";
+                    $ret .= "<tr class='$class'><td>" . $iline->{topic} . ": " . $iline->{text} . "</td></tr>";
                 }
             }
         }
         foreach my $line (@data) {
             if ( $line->{sdate} eq $day ) {
-                $ret .= "<tr><td>";
+                if ( $row % 2 == 0 ) {
+                    $class = "even";
+                }
+                else {
+                    $class = "odd";
+                }
+                $row++;
+
+                $ret .= "<tr class='$class'><td>";
                 if ($out) {
                     my $rep = $out;
                     foreach my $c (@cn) {
@@ -613,34 +632,6 @@ sub DSBMobile_simpleHTML($;$) {
         }
     }
 
-    # foreach my $line (@data) {
-    # next if ( $line->{sdate} lt $today );
-    # if ( $line->{sdate} ne $date ) {
-    # $date = $line->{sdate};
-    # $ret .= "</table><table><tr><td><b>" . $line->{sdate} . "</b></td></tr>";
-    # if ($infoDay) {
-    # foreach my $iline (@idata) {
-    # if ( $iline->{sdate} eq $date ) {
-    # $ret .= "<tr><td>" . $iline->{topic} . ": " . $iline->{text} . "</td></tr>";
-    # }
-    # }
-    # }
-    # }
-    # $ret .= "<tr><td>";
-    # my $out = AttrVal( $name, "dsb_outputFormat", undef );
-    # if ($out) {
-    # foreach my $c (@cn) {
-    # $out =~ s/\%$c\%/$line->{$c}/g;
-    # }
-    # $ret .= $out;
-    # }
-    # else {
-    # foreach my $c (@cn) {
-    # $ret .= $line->{$c} . " ";
-    # }
-    # }
-    # $ret .= "</td></tr>";
-    # }
     $ret .= "</table>";
     return $ret;
 
@@ -659,7 +650,7 @@ sub DSBMobile_infoHTML($) {
     my $row = 1;
     my $class;
     foreach my $line (@data) {
-        if ($row % 2 == 0 ) {
+        if ( $row % 2 == 0 ) {
             $class = "even";
         }
         else {

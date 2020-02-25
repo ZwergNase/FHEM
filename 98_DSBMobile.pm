@@ -711,7 +711,8 @@ sub DSBMobile_tableHTML($;$) {
         $ret .= "</tr>";
 
         foreach my $line (@data) {
-            $ret.= 
+            $ret.= "<tr><td>test</td></tr>";
+            
             if ( $line->{sdate} eq $day ) {
                 if ( $row % 2 == 0 ) {
                     $class = "even";

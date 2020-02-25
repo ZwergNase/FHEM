@@ -586,7 +586,7 @@ sub DSBMobile_simpleHTML($;$) {
     foreach my $day (@days) {
         my $row   = 0;
         my $class = "even";
-        $ret .= "</table><table class='block wide'><tr class='$class'><th><b>" . $day . "</b></th></tr>";
+        $ret .= "</table><table class='block wide'><tr class='$class'><td><b>" . $day . "</b></td></tr>";
         $row++;
         if ($infoDay) {
             foreach my $iline (@idata) {
@@ -706,13 +706,11 @@ sub DSBMobile_tableHTML($;$) {
         }
         $ret .= "<tr>";
         foreach my $c (@cn) {
-            $ret .= "<th>" . $c . "</th>";
+            $ret .= "<td>" . $c . "</td>";
         }
         $ret .= "</tr>";
 
         foreach my $line (@data) {
-            $ret.= "<tr><td>test</td></tr>";
-            
             if ( $line->{sdate} eq $day ) {
                 if ( $row % 2 == 0 ) {
                     $class = "even";
@@ -923,10 +921,14 @@ sub DSBMobileUUID() {
                 <li><a name="dsb_outputFormat">dsb_outputFormat</a>: Kann benutzt werden, um den Output des weblinks zu formatieren. Die Readingnamen von % umschlossen können als Variablen verwendet werden, z.B. <code>%Klasse_n_%</code></li>
             </ul>
         </ul>
-        DSBMobile bietet zusätzlich zwei Funktionen, um die Informationen in weblinks darzustellen:
+        DSBMobile bietet zusätzlich drei Funktionen, um die Informationen in weblinks darzustellen:
         <ul>
             <li>DSBMobile_simpleHTML($name ["dsb",showInfoOfTheDay]): Zeigt den Vertretungsplan, wenn der zweite optionale Parameter auf "1" gesetzt wird, wird die Info des Tages zusätzlich mit angezeigt.
+                Die Darstellung kann durch das Attribut dsb_outputFormat beeinflusst werden
                 Beispiel <code>defmod dsb_web weblink htmlCode {DSBMobile_simpleHTML("dsb",1)}</code>
+            </li>
+            <li>DSBMobile_tableHTML($name ["dsb",showInfoOfTheDay]): Zeigt den Vertretungsplan in einfacher tabellarischer Ansicht, wenn der zweite optionale Parameter auf "1" gesetzt wird, wird die Info des Tages zusätzlich mit angezeigt.
+                Beispiel <code>defmod dsb_web weblink htmlCode {DSBMobile_tableHTML("dsb",1)}</code>
             </li>
             <li>DSBMobile_infoHTML($name): Zeigt die Aushänge mit Links zu den Details.
                 Beispiel <code>defmod dsb_infoweb weblink htmlCode {DSBMobile_infoHTML("dsb")}</code>

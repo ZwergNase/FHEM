@@ -736,7 +736,7 @@ sub DSBMobile_tableHTML($;$) {
     return $ret;
 
 }
-####################################
+######################################
 sub DSBMobile_infoHTML($) {
     my ( $name, $infoDay ) = @_;
     my $dat = ReadingsVal( $name, ".lastAResult", "" );

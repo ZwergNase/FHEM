@@ -1,4 +1,4 @@
-﻿# $Id: 98_DSBMobile.pm 21200 2020-02-14 21:51:19Z KernSani $
+﻿# $Id: 98_DSBMobile.pm 21249 2020-02-22 22:16:56Z KernSani $
 ##############################################################################
 #
 #      98_DSBMobile.pm
@@ -546,7 +546,104 @@ sub DSBMobile_simpleHTML($;$) {
     my $idat = ReadingsVal( $name, ".lastIResult", "" );
     my @cn = split( ",", ReadingsVal( $name, "columnNames", "" ) );
     my $classr = ReadingsVal( $name, "dsb_classReading", "Klasse_n_" );
-    my $ret = "<table class='block wide'>";
+    my $ret = "<table>";
+
+    $dat  = decode_json($dat);
+    $idat = decode_json($idat);
+
+    my @data  = @$dat;
+    my @idata = @$idat;
+    return "no data found" if ( @data == 0 && ( @idata == 0 || !$infoDay ) );
+
+    if ( @data > 0 ) {
+        @data = sort { $a->{sdate} cmp $b->{sdate} or $a->{$classr} cmp $b->{$classr} } @data;
+    }
+
+    # get today
+    my ( $sec, $min, $hour, $mday, $month, $year, $wday, $yday, $isdst )
+        = localtime( gettimeofday() );
+    $month++;
+    $year += 1900;
+    my $today = sprintf( '%04d-%02d-%02d', $year, $month, $mday );
+
+    # build a sorted array of valid dates
+    my %hash = ();
+    foreach my $d (@data) {
+        $hash{ $d->{sdate} } = 1 if $d->{sdate} ge $today;
+    }
+    if ($infoDay) {
+        foreach my $d (@idata) {
+            $hash{ $d->{sdate} } = 1 if $d->{sdate} ge $today;
+        }
+    }
+    my @days = keys %hash;
+    @days = sort { $a cmp $b } @days;
+
+    my $date = "";
+    my $class;
+    my $out = AttrVal( $name, "dsb_outputFormat", undef );
+
+    foreach my $day (@days) {
+        my $row   = 0;
+        my $class = "even";
+        $ret .= "</table><table class='block wide'><tr class='$class'><th><b>" . $day . "</b></th></tr>";
+        $row++;
+        if ($infoDay) {
+            foreach my $iline (@idata) {
+                if ( $row % 2 == 0 ) {
+                    $class = "even";
+                }
+                else {
+                    $class = "odd";
+                }
+                $row++;
+
+                if ( $iline->{sdate} eq $day ) {
+                    $ret .= "<tr class='$class'><td>" . $iline->{topic} . ": " . $iline->{text} . "</td></tr>";
+                }
+            }
+        }
+        foreach my $line (@data) {
+            if ( $line->{sdate} eq $day ) {
+                if ( $row % 2 == 0 ) {
+                    $class = "even";
+                }
+                else {
+                    $class = "odd";
+                }
+                $row++;
+
+                $ret .= "<tr class='$class'><td>";
+                if ($out) {
+                    my $rep = $out;
+                    foreach my $c (@cn) {
+                        $rep =~ s/\%$c\%/$line->{$c}/g;
+                    }
+                    $ret .= $rep;
+                }
+                else {
+                    foreach my $c (@cn) {
+                        $ret .= $line->{$c} . " ";
+                    }
+                }
+                $ret .= "</td></tr>";
+
+            }
+        }
+    }
+
+    $ret .= "</table>";
+    return $ret;
+
+}
+###################################
+sub DSBMobile_tableHTML($;$) {
+    my ( $name, $infoDay ) = @_;
+    my $dat  = ReadingsVal( $name, ".lastResult",  "" );
+    my $idat = ReadingsVal( $name, ".lastIResult", "" );
+    my @cn = split( ",", ReadingsVal( $name, "columnNames", "" ) );
+    my $classr = ReadingsVal( $name, "dsb_classReading", "Klasse_n_" );
+    my $ret = "<table>";
 
     $dat  = decode_json($dat);
     $idat = decode_json($idat);
@@ -599,7 +696,11 @@ sub DSBMobile_simpleHTML($;$) {
                 $row++;
 
                 if ( $iline->{sdate} eq $day ) {
-                    $ret .= "<tr class='$class'><td>" . $iline->{topic} . ": " . $iline->{text} . "</td></tr>";
+                    $ret .= "<tr class='$class'><td colspan ='@cn'>" . $iline->{topic} . ": " . $iline->{text} . "</td></tr><tr>";
+                    foreach my $c (@cn) {
+                        $ret .= "<th>".$c."</th>";
+                    }
+                    $ret .= "</tr>";
                 }
             }
         }
@@ -613,20 +714,13 @@ sub DSBMobile_simpleHTML($;$) {
                 }
                 $row++;
 
-                $ret .= "<tr class='$class'><td>";
-                if ($out) {
-                    my $rep = $out;
-                    foreach my $c (@cn) {
-                        $rep =~ s/\%$c\%/$line->{$c}/g;
-                    }
-                    $ret .= $rep;
-                }
+                $ret .= "<tr class='$class'>";
                 else {
                     foreach my $c (@cn) {
-                        $ret .= $line->{$c} . " ";
+                        $ret .= "<td>".$line->{$c} . "</td>";
                     }
                 }
-                $ret .= "</td></tr>";
+                $ret .= "</tr>";
 
             }
         }

@@ -845,10 +845,14 @@ sub DSBMobileUUID() {
                 <li><a name="dsb_outputFormat">dsb_outputFormat</a>: can be used to format the output of the weblink. Takes the readingnames enclosed in % as variables, e.g. <code>%Klasse_n_%</code></li>
             </ul>
         </ul>
-        DSBMobile additionally provides two functions to display the information in weblinks:
+        DSBMobile additionally provides three functions to display the information in weblinks:
         <ul>
             <li>DSBMobile_simpleHTML($name ["dsb","showInfoOfTheDay"]): Shows the timetable changes, if the second optional parameter is "1", the Info of the Day will be displayed additionally.
+                The format may be defined with the dsb_outputFormat attribute
                 Example <code>defmod dsb_web weblink htmlCode {DSBMobile_simpleHTML("dsb",1)}</code>
+            </li>
+            <li>DSBMobile_tableHTML($name ["dsb","showInfoOfTheDay"]): Shows the timetable changes in a tabular format, if the second optional parameter is "1", the Info of the Day will be displayed additionally.
+                Example <code>defmod dsb_web weblink htmlCode {DSBMobile_tableHTML("dsb",1)}</code>
             </li>
             <li>DSBMobile_infoHTML($name): Shows the postings with links to the Details.
                 Example <code>defmod dsb_infoweb weblink htmlCode {DSBMobile_infoHTML("dsb")}</code>

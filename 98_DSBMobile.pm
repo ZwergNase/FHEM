@@ -721,7 +721,7 @@ sub DSBMobile_tableHTML($;$) {
                 $ret .= "<tr class='$class'>";
 
                 foreach my $c (@cn) {
-                    $ret .= "<td>" . $line->{$c} . "</td>";
+                    $ret .= "<td>" . $c . "</td>";
 
                 }
                 $ret .= "</tr>";

@@ -700,14 +700,16 @@ sub DSBMobile_tableHTML($;$) {
                         .= "<tr class='$class'><td colspan ='@cn'>"
                         . $iline->{topic} . ": "
                         . $iline->{text}
-                        . "</td></tr><tr>";
-                    foreach my $c (@cn) {
-                        $ret .= "<th>" . $c . "</th>";
-                    }
-                    $ret .= "</tr>";
+                        . "</td></tr>";
                 }
             }
         }
+        $re .= "<tr>";
+        foreach my $c (@cn) {
+            $ret .= "<th>" . $c . "</th>";
+        }
+        $ret .= "</tr>";
+
         foreach my $line (@data) {
             if ( $line->{sdate} eq $day ) {
                 if ( $row % 2 == 0 ) {
@@ -721,7 +723,7 @@ sub DSBMobile_tableHTML($;$) {
                 $ret .= "<tr class='$class'>";
 
                 foreach my $c (@cn) {
-                    $ret .= "<td>" . $c . "</td>";
+                    $ret .= "<td>" . $line->{$c} . "</td>";
 
                 }
                 $ret .= "</tr>";

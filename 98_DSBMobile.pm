@@ -704,13 +704,14 @@ sub DSBMobile_tableHTML($;$) {
                 }
             }
         }
-        $re .= "<tr>";
+        $ret .= "<tr>";
         foreach my $c (@cn) {
             $ret .= "<th>" . $c . "</th>";
         }
         $ret .= "</tr>";
 
         foreach my $line (@data) {
+            $ret.= 
             if ( $line->{sdate} eq $day ) {
                 if ( $row % 2 == 0 ) {
                     $class = "even";

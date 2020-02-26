@@ -316,7 +316,7 @@ sub DSBMobile_processTTPages($) {
     my $name = $hash->{NAME};
 
     my @ttpages = $hash->{helper}{tturl};
-
+    Log3 $name,5, "[$name] processing pages ".Dumper(@ttpages);
     my $ttpage = shift(@ttpages);
     $hash->{helper}{tturl} = @ttpages;
 

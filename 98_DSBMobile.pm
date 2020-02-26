@@ -172,7 +172,7 @@ sub DSBMobile_query($) {
         "LastUpdate" => $date
     );
 
-    my $json = encode_json(\%arg);
+    my $json = encode_json( \%arg );
     Log3 $name, 5, "[$name] Arguments (in json) to encode" . Dumper($json);
     my $zip;
     IO::Compress::Gzip::gzip \$json => \$zip;
@@ -240,8 +240,8 @@ sub DSBMobile_getDataCallback($) {
         #$ret .= Dumper($c->{root}{Childs}[0]->{Childs}[0]->{Detail});
         foreach my $topic ($c) {
             if ( $c->{MethodName} eq "timetable" ) {
-                $url                   = $topic->{Root}{Childs}[0]->{Childs}[0]->{Detail};
-                $udate                 = $topic->{Root}{Childs}[0]->{Childs}[0]->{Date};
+                $url           = $topic->{Root}{Childs}[0]->{Childs}[0]->{Detail};
+                $udate         = $topic->{Root}{Childs}[0]->{Childs}[0]->{Date};
                 $ttpages{$url} = 1;
             }
             if ( $c->{MethodName} eq "tiles" ) {
@@ -315,10 +315,8 @@ sub DSBMobile_processTTPages($) {
     my ($hash) = @_;
     my $name = $hash->{NAME};
 
-    my @ttpages = $hash->{helper}{tturl};
-    Log3 $name,5, "[$name] processing pages ".Dumper(@ttpages);
-    my $ttpage = shift @ttpages;
-    Log3 $name,5, "[$name] processing page ".$ttpage;
+    my $ttpage = shift @{ $hash->{helper}{tturl} };
+    Log3 $name, 5, "[$name] processing page " . $ttpage;
 
     $hash->{helper}{tturl} = @ttpages;
 

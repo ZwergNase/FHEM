@@ -723,7 +723,7 @@ sub DSBMobile_tableHTML($;$) {
     foreach my $day (@days) {
         my $row   = 0;
         my $class = "even";
-        $ret .= "</table><table class='block wide'><tr class='$class'><td colspan = '$@cn'><b>" . $day . "</b></td></tr>";
+        $ret .= "</table><table class='block wide'><tr class='$class'><td colspan = '@cn'><b>" . $day . "</b></td></tr>";
         $row++;
         if ($infoDay) {
             foreach my $iline (@idata) {
@@ -737,7 +737,7 @@ sub DSBMobile_tableHTML($;$) {
 
                 if ( $iline->{sdate} eq $day ) {
                     $ret
-                        .= "<tr class='$class'><td colspan ='$@cn'>"
+                        .= "<tr class='$class'><td colspan ='@cn'>"
                         . $iline->{topic} . ": "
                         . $iline->{text}
                         . "</td></tr>";

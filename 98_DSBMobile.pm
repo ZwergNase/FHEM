@@ -172,7 +172,7 @@ sub DSBMobile_query($) {
         "LastUpdate" => $date
     );
 
-    my $json = encode_json \%arg;
+    my $json = encode_json(\%arg);
     Log3 $name, 5, "[$name] Arguments (in json) to encode" . Dumper($json);
     my $zip;
     IO::Compress::Gzip::gzip \$json => \$zip;

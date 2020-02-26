@@ -232,6 +232,7 @@ sub DSBMobile_getDataCallback($) {
     my $udate;
     my $test = $res->{ResultMenuItems}[0]->{Childs};
     my @aus;
+    my %ttpages = ();    # hash to get unique urls
     foreach my $c (@$test) {
 
         #if ($c->{Title} eq "Pläne") {
@@ -239,8 +240,9 @@ sub DSBMobile_getDataCallback($) {
         #$ret .= Dumper($c->{root}{Childs}[0]->{Childs}[0]->{Detail});
         foreach my $topic ($c) {
             if ( $c->{MethodName} eq "timetable" ) {
-                $url   = $topic->{Root}{Childs}[0]->{Childs}[0]->{Detail};
-                $udate = $topic->{Root}{Childs}[0]->{Childs}[0]->{Date};
+                $url                   = $topic->{Root}{Childs}[0]->{Childs}[0]->{Detail};
+                $udate                 = $topic->{Root}{Childs}[0]->{Childs}[0]->{Date};
+                $ttpages{$url} = 1;
             }
             if ( $c->{MethodName} eq "tiles" ) {
                 my $d = $topic->{Root}{Childs};
@@ -295,22 +297,48 @@ sub DSBMobile_getDataCallback($) {
     readingsBulkUpdate( $hash, ".lastAResult", encode_json( \@aus ) );
     readingsEndUpdate( $hash, 1 );
 
-    Log3 $name, 4, "[$name] Extracted the url: " . $url;
+    # build an array from url hash
+    my @ttpages = keys %ttpages;
 
-    my $nparam = {
-        url      => $url,
-        method   => "GET",
-        hash     => $hash,
-        callback => \&DSBMobile_getTTCallback
-    };
-    Log3 $name, 5, "[$name] 2nd nonblocking HTTP Call starting";
-    HttpUtils_NonblockingGet($nparam);
-
+    if ( @ttpages == 1 ) {
+        Log3 $name, 4, "[$name] Extracted the url: " . $url;
+    }
+    else {
+        Log3 $name, 4, "[$name] Extracted multiple urls: " . Dumper(@ttpages);
+    }
+    $hash->{helper}{tturl} = @ttpages;
+    DSBMobile_processTTPages($hash);
     return undef;
-
 }
 #####################################
-sub DSBMobile_getTTCallback($) {
+sub DSBMobile_processTTPages($) {
+    my ($hash) = @_;
+    my $name = $hash->{NAME};
+
+    my @ttpages = $hash->{helper}{tturl};
+
+    my $ttpage = shift(@ttpages);
+    $hash->{helper}{tturl} = @ttpages;
+
+    if ($ttpage) {
+        my $nparam = {
+            url      => $ttpage,
+            method   => "GET",
+            hash     => $hash,
+            callback => \&DSBMobile_getTTCallback
+        };
+        Log3 $name, 5, "[$name] 2nd nonblocking HTTP Call starting for " . $ttpage;
+
+        HttpUtils_NonblockingGet($nparam);
+    }
+    else {
+        delete $hash->{helper}{tturl};
+        DSBMobile_getTTCallback($hash);
+    }
+    return undef;
+}
+#####################################
+sub DSBMobile_TTpageCallback($) {
     my ( $param, $err, $data ) = @_;
     my $hash = $param->{hash};
     my $name = $hash->{NAME};
@@ -322,6 +350,18 @@ sub DSBMobile_getTTCallback($) {
         readingsSingleUpdate( $hash, "error", $err, 0 );
         return undef;
     }
+
+    $hash->{helper}{ttdata} .= $data;
+    DSBMobile_processTTPages($hash);
+}
+
+#####################################
+sub DSBMobile_getTTCallback($) {
+    my ($hash) = @_;
+    my $name = $hash->{NAME};
+
+    my $data = $hash->{helper}{ttdata};
+    delete $hash->{helper}{ttdata};
 
     $data =~ s/&nbsp;/-/g;
     $data = latin1ToUtf8($data);

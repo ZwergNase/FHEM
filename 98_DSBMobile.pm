@@ -306,7 +306,7 @@ sub DSBMobile_getDataCallback($) {
     else {
         Log3 $name, 4, "[$name] Extracted multiple urls: " . Dumper(@ttpages);
     }
-    $hash->{helper}{tturl} = @ttpages;
+    $hash->{helper}{tturl} = \@ttpages;
     DSBMobile_processTTPages($hash);
     return undef;
 }

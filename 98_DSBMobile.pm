@@ -323,7 +323,7 @@ sub DSBMobile_processTTPages($) {
             url      => $ttpage,
             method   => "GET",
             hash     => $hash,
-            callback => \&DSBMobile_getTTCallback
+            callback => \&DSBMobile_TTpageCallback
         };
         Log3 $name, 5, "[$name] 2nd nonblocking HTTP Call starting for " . $ttpage;
 

@@ -240,11 +240,12 @@ sub DSBMobile_getDataCallback($) {
         #$ret .= Dumper($c->{root}{Childs}[0]->{Childs}[0]->{Detail});
         foreach my $topic ($c) {
             if ( $c->{MethodName} eq "timetable" ) {
-                $url           = $topic->{Root}{Childs}[0]->{Childs}[0]->{Detail};
-                $udate         = $topic->{Root}{Childs}[0]->{Childs}[0]->{Date};
-                $ttpages{$url} = 1;
-#                $ttpages{"https://app.dsbcontrol.de/data/2f655f00-f85f-4019-88f7-c80db0f84a18/6ac44998-bd64-4ac8-b003-302c77c92bc5/subst_001.htm"} = 1;
- #               $ttpages{"https://app.dsbcontrol.de/data/2f655f00-f85f-4019-88f7-c80db0f84a18/3947d940-6686-4b36-be82-08ef966a9ba0/subst_001.htm"} = 1;
+                my $p = $topic->{Root}{Childs};
+                for my $tt (@$p) {
+                    $url           = $topic->{Root}{Childs}[0]->{Childs}[0]->{Detail};
+                    $udate         = $topic->{Root}{Childs}[0]->{Childs}[0]->{Date};
+                    $ttpages{$url} = 1;
+                }
             }
             if ( $c->{MethodName} eq "tiles" ) {
                 my $d = $topic->{Root}{Childs};
@@ -722,9 +723,12 @@ sub DSBMobile_tableHTML($;$) {
     my $cols = @cn;
     foreach my $day (@days) {
         my $row   = 0;
-        my $cols = @cn;
+        my $cols  = @cn;
         my $class = "even";
-        $ret .= "</table><table class='block wide'><tr class='$class'><td colspan = '$cols'><b>" . $day . "</b></td></tr>";
+        $ret
+            .= "</table><table class='block wide'><tr class='$class'><td colspan = '$cols'><b>"
+            . $day
+            . "</b></td></tr>";
         $row++;
         if ($infoDay) {
             foreach my $iline (@idata) {

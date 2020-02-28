@@ -242,8 +242,8 @@ sub DSBMobile_getDataCallback($) {
             if ( $c->{MethodName} eq "timetable" ) {
                 my $p = $topic->{Root}{Childs};
                 for my $tt (@$p) {
-                    $url           = $topic->{Root}{Childs}[0]->{Childs}[0]->{Detail};
-                    $udate         = $topic->{Root}{Childs}[0]->{Childs}[0]->{Date};
+                    $url           = $tt->{Childs}[0]->{Detail};
+                    $udate         = $tt->{Childs}[0]->{Date};
                     $ttpages{$url} = 1;
                 }
             }

@@ -242,10 +242,13 @@ sub DSBMobile_getDataCallback($) {
             if ( $c->{MethodName} eq "timetable" ) {
                 my $p = $topic->{Root}{Childs};
                 for my $tt (@$p) {
-                    $url           = $tt->{Childs}[0]->{Detail};
-                    $udate         = $tt->{Childs}[0]->{Date};
-                    $ttpages{$url} = 1;
-                    Log3 $name,5,"[$name] found url $url";
+                    my $subtt = $tt->{Childs};
+                    for my $stt (@$subtt) {
+                        $url           = $stt->{Detail};
+                        $udate         = $stt->{Date};
+                        $ttpages{$url} = 1;
+                        Log3 $name, 5, "[$name] found url $url";
+                    }
                 }
             }
             if ( $c->{MethodName} eq "tiles" ) {

@@ -245,6 +245,7 @@ sub DSBMobile_getDataCallback($) {
                     $url           = $tt->{Childs}[0]->{Detail};
                     $udate         = $tt->{Childs}[0]->{Date};
                     $ttpages{$url} = 1;
+                    Log3 $name,5,"[$name] found url $url";
                 }
             }
             if ( $c->{MethodName} eq "tiles" ) {

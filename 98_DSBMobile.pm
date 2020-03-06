@@ -1,4 +1,4 @@
-﻿# $Id: 98_DSBMobile.pm 21278 2020-02-25 22:54:24Z KernSani $
+﻿# $Id: 98_DSBMobile.pm 21340 2020-03-02 20:54:54Z KernSani $
 ##############################################################################
 #
 #      98_DSBMobile.pm
@@ -323,9 +323,9 @@ sub DSBMobile_processTTPages($) {
     my $name = $hash->{NAME};
 
     my $ttpage = shift @{ $hash->{helper}{tturl} };
-    Log3 $name, 5, "[$name] processing page " . $ttpage;
-
+    
     if ($ttpage) {
+        Log3 $name, 5, "[$name] processing page " . $ttpage;
         my $nparam = {
             url      => $ttpage,
             method   => "GET",

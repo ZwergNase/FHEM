@@ -1,4 +1,4 @@
-﻿# $Id: 98_DSBMobile.pm 21340 2020-03-02 20:54:54Z KernSani $
+﻿# $Id: 98_DSBMobile.pm 21368 2020-03-06 22:58:24Z KernSani $
 ##############################################################################
 #
 #      98_DSBMobile.pm
@@ -255,11 +255,16 @@ sub DSBMobile_getDataCallback($) {
                 my $d = $topic->{Root}{Childs};
 
                 for my $tile (@$d) {
-                    my %au = (
-                        title => $tile->{Title},
-                        url   => $tile->{Childs}[0]->{Detail},
-                        date  => $tile->{Childs}[0]->{Date}
-                    );
+                    my $subtile = $tile->{Childs};
+                    my $i = 1;
+                    for my $stile (@$subtile) {
+                        my %au = (
+                            title => $tile->{Title}.$i,
+                            url   => $stile->{Detail},
+                            date  => $stile->{Date}                            
+                        );
+                        $i++;
+                    }
                     push( @aus, \%au );
                 }
             }
@@ -323,7 +328,7 @@ sub DSBMobile_processTTPages($) {
     my $name = $hash->{NAME};
 
     my $ttpage = shift @{ $hash->{helper}{tturl} };
-    
+
     if ($ttpage) {
         Log3 $name, 5, "[$name] processing page " . $ttpage;
         my $nparam = {
@@ -625,7 +630,7 @@ sub DSBMobile_simpleHTML($;$) {
     @days = sort { $a cmp $b } @days;
 
     my $date = "";
-    my $class;
+
     my $out = AttrVal( $name, "dsb_outputFormat", undef );
 
     foreach my $day (@days) {
@@ -635,15 +640,15 @@ sub DSBMobile_simpleHTML($;$) {
         $row++;
         if ($infoDay) {
             foreach my $iline (@idata) {
-                if ( $row % 2 == 0 ) {
-                    $class = "even";
-                }
-                else {
-                    $class = "odd";
-                }
-                $row++;
-
                 if ( $iline->{sdate} eq $day ) {
+                    if ( $row % 2 == 0 ) {
+                        $class = "even";
+                    }
+                    else {
+                        $class = "odd";
+                    }
+                    $row++;
+
                     $ret .= "<tr class='$class'><td>" . $iline->{topic} . ": " . $iline->{text} . "</td></tr>";
                 }
             }

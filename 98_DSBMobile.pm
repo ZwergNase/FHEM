@@ -264,8 +264,9 @@ sub DSBMobile_getDataCallback($) {
                             date  => $stile->{Date}                            
                         );
                         $i++;
+                        push( @aus, \%au );
                     }
-                    push( @aus, \%au );
+                    
                 }
             }
         }

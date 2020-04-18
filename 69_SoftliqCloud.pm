@@ -1011,9 +1011,9 @@ sub wsConnect {
     $hash->{DeviceName} = $host . $port;
     $hash->{helper}{url} = $url;
     main::DevIo_CloseDev($hash) if ( main::DevIo_IsOpen($hash) );
-    main::DevIo_OpenDev( $hash, 1, "FHEM::SoftliqCloud::wsHandshake", "FHEM::SoftliqCloud::wsFail" );
-
-    main::Log3 $name, 1, "[$name] Opening Websocket";
+    #main::DevIo_OpenDev( $hash, 1, "FHEM::SoftliqCloud::wsHandshake", "FHEM::SoftliqCloud::wsFail" );
+    my $conn = main::DevIo_OpenDev( $hash, 0, "FHEM::SoftliqCloud::wsHandshake");
+    main::Log3 $name, 1, "[$name] Opening Websocket: $conn";
     return;
 }
 

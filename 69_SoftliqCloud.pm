@@ -1008,7 +1008,7 @@ sub wsConnect {
     #     Blocking                   => 1
     # ) or main::Log3 $name, 1, "[$name] Failed to connect to socket: $@";
 
-    $hash->{DeviceName} = $host . $port;
+    $hash->{DeviceName} = $host .':'. $port;
     $hash->{helper}{url} = $url;
     main::DevIo_CloseDev($hash) if ( main::DevIo_IsOpen($hash) );
     #main::DevIo_OpenDev( $hash, 1, "FHEM::SoftliqCloud::wsHandshake", "FHEM::SoftliqCloud::wsFail" );

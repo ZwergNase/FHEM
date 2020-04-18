@@ -1021,7 +1021,7 @@ sub wsHandshake {
     my $hash       = shift;
     my $name       = $hash->{NAME};
     my $tcp_socket = $hash->{TCPDev};
-    my $url        = $hash->{helper}{url} = $url;
+    my $url        = $hash->{helper}{url};
 
     # create a websocket protocol handler
     #  this doesn't actually "do" anything with the socket:

@@ -82,6 +82,7 @@ BEGIN {
     GP_Import(
         qw(
             AttrVal
+            AttrNum
             InternalTimer
             InternalVal
             readingsSingleUpdate
@@ -856,11 +857,11 @@ sub initToken {
         . "&redirect_uri=msal5a83cc16-ffb1-42e9-9859-9fbf07f36df8%3A%2F%2Fauth"
         . "&client_id=5a83cc16-ffb1-42e9-9859-9fbf07f36df8";
 
-    $hash->{loglevel}        = "1";
-    $newparam->{httpversion} = "1.1";
+    $hash->{loglevel}        = 1;
+    $newparam->{httpversion} = '1.1';
     $newparam->{data}        = $newdata;
     $newparam->{hash}        = $hash;
-    $newparam->{method}      = "POST";
+    $newparam->{method}      = 'POST';
     $newparam->{callback}    = \&parseRefreshToken;
     HttpUtils_NonblockingGet($newparam);
     return;

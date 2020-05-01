@@ -252,9 +252,9 @@ sub Define {
     return "Cannot define device. Please install perl modules $missingModul."
         if ($missingModul);
 
+    my $usage = "syntax: define <name> SoftliqCloud <loginName> <password>";
     return $usage if ( @args != 4 );
 
-    my $usage = "syntax: define <name> SoftliqCloud <loginName> <password>";
     my ( $name, $type, $user, $pass ) = @args;
 
     Log3 $name, LOG_SEND, "[$name] SoftliqCloud defined $name";

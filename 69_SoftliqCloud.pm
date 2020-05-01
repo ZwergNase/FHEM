@@ -224,17 +224,17 @@ my %paramValueMap = (
 sub Initialize {
     my ($hash) = @_;
 
-    $hash->{SetFn}    = 'FHEM::SoftliqCloud::Set';
-    $hash->{GetFn}    = 'FHEM::SoftliqCloud::Get';
-    $hash->{DefFn}    = 'FHEM::SoftliqCloud::Define';
-    $hash->{ReadyFn}  = 'FHEM::SoftliqCloud::Ready';
-    $hash->{ReadFn}   = 'FHEM::SoftliqCloud::wsReadDevIo';
-    $hash->{NotifyFn} = 'FHEM::SoftliqCloud::Notify';
-    $hash->{UndefFn}  = 'FHEM::SoftliqCloud::Undefine';
-    $hash->{AttrFn}   = 'FHEM::SoftliqCloud::Attr';
+    $hash->{SetFn}    = \&Set;
+    $hash->{GetFn}    = \&Get;
+    $hash->{DefFn}    = \&Define;
+    $hash->{ReadyFn}  = \&Ready;
+    $hash->{ReadFn}   = \&wsReadDevIo;
+    $hash->{NotifyFn} = \&Notify;
+    $hash->{UndefFn}  = \&Undefine;
+    $hash->{AttrFn}   = \&Attr;
     my @SQattr = ( "sq_interval", "disable:0,1", "sq_duplex:0,1" );
 
-    $hash->{AttrList} = join( "\t", @SQattr ) . "\t" . $readingFnAttributes;
+    $hash->{AttrList} = join( ' ', @SQattr ) . ' ' . $readingFnAttributes;
 
     #$hash->{AttrList} = $::readingFnAttributes;
 
@@ -1438,7 +1438,8 @@ sub processCmdQueue {
 }
 
 sub safe_decode_json {
-    my ( $hash, $data ) = @_;
+    my $hash = shift;
+    my $data = shift;
     my $name = $hash->{NAME};
 
     my $json = undef;

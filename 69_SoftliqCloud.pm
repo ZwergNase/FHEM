@@ -247,22 +247,24 @@ sub Define {
 
     return $@ if ( !FHEM::Meta::SetInternals($hash) );
 
-    my @a = split( "[ \t][ \t]*", $def );
+    my @args = split m{\s+}, $def;
 
-    my $usage = "syntax: define <name> SoftliqCloud <loginName> <password>";
     return "Cannot define device. Please install perl modules $missingModul."
         if ($missingModul);
-    my ( $name, $type, $user, $pass ) = @a;
-    if ( int(@a) != 4 ) {
-        return $usage;
-    }
+
+    return $usage if ( @args != 4 );
+
+    my $usage = "syntax: define <name> SoftliqCloud <loginName> <password>";
+    my ( $name, $type, $user, $pass ) = @args;
+
     Log3 $name, LOG_SEND, "[$name] SoftliqCloud defined $name";
 
     $hash->{NAME} = $name;
     $hash->{USER} = $user;
     my $crypt = encryptPW($pass);
     $hash->{PASS} = $crypt;
-    $hash->{DEF} = qq($user $crypt);
+    $hash->{DEF}  = qq($user $crypt);
+
     #start timer
     if ( !IsDisabled($name) && $init_done ) {
         my $next = int( gettimeofday() ) + 1;
@@ -395,14 +397,14 @@ sub Attr {
         if ( $attr eq 'sq_interval' ) {
 
             # restrict interval to 5 minutes
-            if ( int( $aVal > SQ_MINIMUM_INTERVAL ) ) {
+            if ( $aVal > SQ_MINIMUM_INTERVAL ) {
                 my $next = int( gettimeofday() ) + 1;
                 InternalTimer( $next, 'FHEM::SoftliqCloud::sqTimer', $hash, 0 );
                 return;
             }
 
             # message if interval is less than 5 minutes
-            if ( int( $aVal > 0 ) ) {
+            if ( $aVal > 0 ) {
                 return qq (Interval for $name has to be > 5 minutes (300 seconds) or 0 to disable);
             }
             RemoveInternalTimer($hash);
@@ -559,7 +561,7 @@ sub sqTimer {
     RemoveInternalTimer($hash);
     query($hash);
     Log3 $name, LOG_SEND, qq([$name]: Starting Timer);
-    my $next = int( gettimeofday() ) + AttrVal( $name, 'sq_interval', HOURSECONDS );
+    my $next = int( gettimeofday() ) + AttrNum( $name, 'sq_interval', HOURSECONDS );
     InternalTimer( $next, 'FHEM::SoftliqCloud::sqTimer', $hash, 0 );
     return;
 }
@@ -1139,12 +1141,9 @@ sub getParamList {
         my $ret = '<table>';
         foreach my $p ( sort @{ $hash->{helper}{params} } ) {
             $ret .= qq (<tr><td>$p</td>);
-            if ( defined( $paramTexts{$p} ) ) {
-                $ret .= qq (<td>$paramTexts{$p}</td>);
-            }
-            else {
-                $ret .= qq (<td>N/A</td>);
-            }
+            $paramTexts{$p} //= 'N/A'
+                ; #The slash slash operator in perl returns the left side value if it is defined, otherwise it returns the right side value.
+            $ret .= qq(<td>$paramTexts{$p}</td>);
             my $rv = ReadingsVal( $name, ".$p", '' );
             $ret .= qq(<td>$rv);
             if ( defined( $paramValueMap{$p} ) ) {

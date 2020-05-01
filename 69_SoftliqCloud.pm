@@ -911,7 +911,7 @@ sub getRefreshTokenHeader {
         "x-client-SKU"             => "MSAL.iOS",
         "Accept"                   => "application/json",
         "x-client-OS"              => "12.4.1",
-        "x-app-name"               => "Grünbeck myProduct",
+        "x-app-name"               => "Gruenbeck myProduct",
         "x-client-CPU"             => "64",
         "x-app-ver"                => "1.0.4",
         "Accept-Language"          => "de-de",

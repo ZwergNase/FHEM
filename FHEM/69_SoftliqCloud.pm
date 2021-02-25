@@ -310,6 +310,16 @@ sub Set {
     my $arg  = shift;
     my $val  = shift;
 
+    if ( $cmd eq 'password' ) {
+
+        my $err = StorePassword( $hash, $arg );
+        if ( !IsDisabled($name) && defined( ReadPassword($hash) ) ) {
+            my $next = int( gettimeofday() ) + 1;
+            InternalTimer( $next, 'FHEM::Gruenbeck::SoftliqCloud::sqTimer', $hash, 0 );
+        }
+        return $err;
+    }
+
     #delete $hash->{helper}{cmdQueue};
     if ( !ReadPassword($hash) ) {
         return qq(set password first);
@@ -332,16 +342,6 @@ sub Set {
     if ( $cmd eq 'refill' ) {
         refill($hash);
         return;
-    }
-    if ( $cmd eq 'password' ) {
-
-        my $err = StorePassword( $hash, $arg );
-        if ( !IsDisabled($name) && defined( ReadPassword($hash) ) ) {
-            my $next = int( gettimeofday() ) + 1;
-            InternalTimer( $next, 'FHEM::Gruenbeck::SoftliqCloud::sqTimer', $hash, 0 );
-        }
-        return $err;
-
     }
 
     return qq (Unknown argument $cmd, choose one of param regenerate:noArg refill:noArg password);

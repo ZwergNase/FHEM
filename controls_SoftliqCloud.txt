@@ -1,1 +1,1 @@
-UPD 2020-02-24_20:46:00 62848 FHEM/69_SoftliqCloud.pm 
+UPD 2020-02-25_20:29:00 62848 FHEM/69_SoftliqCloud.pm 
